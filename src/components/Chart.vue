@@ -30,7 +30,10 @@
     <div
       class="tooltip-bar"
       v-show="showToolTip"
-      :style="{ left: `${toolTipBarPosition}px`, top: `${toolTipTopPosition}px` }"
+      :style="{
+        left: `${toolTipBarPosition}px`,
+        top: `${toolTipTopPosition}px`,
+      }"
     />
     <apexchart
       type="line"
@@ -43,6 +46,128 @@
       @mounted="onMounted"
       @updated="onUpdated"
     ></apexchart>
+    <!-- yaxisの幅 -->
+    <div class="testbar" :style="{ width: yaxisRight + 'px' }"></div>
+    <!-- chartまでの幅 -->
+    <div class="testbar" :style="{ width: chartLeft + 'px' }"></div>
+    <!-- <div style="display: flex"> -->
+    <!-- 表：行ヘッダの終わり位置 -->
+    <div
+      class="table"
+      :style="{
+        width: rowColumnWidth + 'px',
+        border: '1px solid #707070',
+        'margin-top': '10px',
+      }"
+    >
+      行ヘッダ
+    </div>
+    <div
+      class="table"
+      :style="{
+        width:
+          rowColumnWidth +
+          columnWidth * 1 -
+          barwidth / 2 -
+          barSpacing / 2 -
+          1 +
+          'px',
+        border: '1px solid #707070',
+        'margin-top': '10px',
+      }"
+    >
+      データ
+    </div>
+    <div
+      class="table"
+      :style="{
+        width:
+          rowColumnWidth +
+          columnWidth * 2 -
+          barwidth / 2 -
+          barSpacing / 2 -
+          1 +
+          'px',
+        border: '1px solid #707070',
+        'margin-top': '10px',
+      }"
+    >
+      データ
+    </div>
+    <div
+      class="table"
+      :style="{
+        width:
+          rowColumnWidth +
+          columnWidth * 3 -
+          barwidth / 2 -
+          barSpacing / 2 -
+          1 +
+          'px',
+        border: '1px solid #707070',
+        'margin-top': '10px',
+      }"
+    >
+      データ
+    </div>
+    <div
+      class="table"
+      :style="{
+        width:
+          rowColumnWidth +
+          columnWidth * 4 -
+          barwidth / 2 -
+          barSpacing / 2 -
+          1 +
+          'px',
+        border: '1px solid #707070',
+        'margin-top': '10px',
+      }"
+    >
+      データ
+    </div>
+    <!-- データ行:1 -->
+    <!-- <div
+        v-for="n of 4"
+        :key="n"
+        class="table"
+        :style="{
+          width: columnWidth / 2 + 'px',
+          border: 'solid #707070',
+          'border-width': '1px 1px 1px 0px',
+          'margin-top': '10px',
+        }"
+      ></div> -->
+    <!-- </div> -->
+    <div
+      class="testbar"
+      :style="{
+        width: chartLeft - barSpacing / 2 + firstBarLeftPadding + 'px',
+      }"
+    ></div>
+    <div
+      class="testbar"
+      :style="{
+        width:
+          chartLeft -
+          barSpacing / 2 +
+          firstBarLeftPadding +
+          barSpacing +
+          barwidth +
+          'px',
+      }"
+    ></div>
+    <div
+      class="underbar"
+      :style="{
+        position: 'absolute',
+        top: chartXaxisLinePosition + 'px',
+        left: chartEventXPosition - barSpacing / 2 + 'px',
+        width: barwidth + barSpacing + 'px',
+      }"
+    ></div>
+    <div>{{ xxx }}</div>
+    <button @click="onRead">Read!!!!!!!!!!</button>
   </div>
 </template>
 
@@ -59,18 +184,33 @@ const COLLECTION_RATE_DATA_INDEX = 1;
 
 export default {
   name: "Chart",
+  props: {
+    scrollY: 0,
+  },
   data() {
     return {
+      events: [],
       currentEvent: null,
       currentConfig: null,
-      chartWidth: 1600,
+      chartWidth: 1000,
       toolTipWidth: 400,
       showToolTip: false,
+      barwidth: null,
+      yaxisRight: null,
+      chartLeft: null,
+      barSpacing: null,
+      firstBarLeftPadding: null,
+      rowColumnWidth: null, // ヘッダ行の幅
+      columnWidth: null, // データ行の幅
+      chartXaxisLinePosition: null,
       series: [
         {
           name: "sales",
           type: "column",
-          data: [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160],
+          data: [
+            440111, 505111, 414111, 671111, 227111, 413111, 201111, 3521111,
+            752111, 320111, 257111, 160111,
+          ],
         },
         {
           name: "collectionRate",
@@ -147,8 +287,8 @@ export default {
         // https://apexcharts.com/docs/options/xaxis/
         xaxis: {
           axisBorder: {
-            color:'#686977' ,
-    },
+            color: "#686977",
+          },
           type: "category",
           categories: [
             "201001",
@@ -166,7 +306,7 @@ export default {
           ],
           labels: {
             formatter: function (value) {
-              console.log("formatterValue", value);
+              // console.log("formatterValue", value);
               if (!value) return [];
               return [value.slice(0, 4), Number(value.slice(4, 6)).toString()];
             },
@@ -189,8 +329,12 @@ export default {
         },
         yaxis: [
           {
+            // floating: true,
             labels: {
-              offsetX: 20,
+              offsetX: -60,
+              align: "right",
+              minWidth: 300,
+              // maxWidth: 160,
               style: {
                 fontSize: "16px",
                 fontFamily: "Roboto",
@@ -198,11 +342,17 @@ export default {
                 cssClass: "apexcharts-yaxis-title",
               },
             },
+            // axisBorder: {
+            //   show: true,
+            //   color: "#78909C",
+            //   offsetX: -10,
+            //   offsetY: 0,
+            // },
           },
           {
             opposite: true,
-
             labels: {
+              offsetX: 10,
               style: {
                 fontSize: "16px",
                 fontFamily: "Roboto",
@@ -210,20 +360,51 @@ export default {
                 cssClass: "apexcharts-yaxis-title",
               },
               padding: {
-                right: 10,
+                right: 0,
               },
             },
           },
         ],
         grid: {
-  padding: {
-    left: 30
-  }
-},
+          padding: {
+            left: 0,
+          },
+        },
       },
     };
   },
+  watch: {
+    // 問題内容が変更されるたびに、関数が実行されます。
+    scrollY(newVal, oldVal) {
+      // console.log('WATCH!!!!')
+      // this.readPosition();
+    }
+  },
   computed: {
+    xxx() {
+      const x = [];
+      this.events.forEach((event, index) => {
+        if (index === 0) {
+          x.push(event.target.getBoundingClientRect().left);
+          return;
+        }
+        const lastX =
+          this.events[index - 1].target.getBoundingClientRect().left;
+        console.log("left", event.target.getBoundingClientRect().left);
+        x.push(event.target.getBoundingClientRect().left - lastX);
+      });
+      // const x = [];
+      // // return this.events.map((event) => event.target.getBoundingClientRect().left)
+      // for (let i = 0; i < this.events.length - 1; i++) {
+      //   if (i === 0) return;
+      //   const yyy =
+      //     this.events[i - 1].event.target.getBoundingClientRect().left;
+      //   const zzz = this.events[i].event.target.getBoundingClientRect().left;
+      //   x.push(zzz - yyy);
+      // }
+      // console.log("xxxxx", x);
+      return x;
+    },
     toolTipLeftPosition() {
       // バーのViewPort基準のx - ツールチップの横幅/2 + バーの幅/2-
       return (
@@ -234,9 +415,7 @@ export default {
     },
     toolTipTopPosition() {
       // バーのViewPort基準のx - ツールチップの横幅/2 + バーの幅/2-
-      return (
-        this.chartEventYPosition 
-      );
+      return this.chartEventYPosition;
     },
     toolTipBarPosition() {
       return this.chartEventXPosition + this.chartBarWidth / 2;
@@ -250,7 +429,8 @@ export default {
     },
     chartEventXPosition() {
       if (this.currentEvent === null) return 0;
-      return this.currentEvent.target.getBoundingClientRect().x;
+      const xOffSet = window.pageXOffset;
+      return this.currentEvent.target.getBoundingClientRect().x + xOffSet;
     },
     toolTipDisplayYear() {
       if (this.currentConfig === null) return "";
@@ -316,6 +496,8 @@ export default {
       });
     },
     onDataPointMouseEnter: function (event, chartContext, config) {
+      console.log("mouseEnter");
+      this.events.push(event);
       this.currentEvent = event;
       this.currentConfig = config;
       // 折れ線グラフの場合、ツールチップを表示しない
@@ -331,17 +513,84 @@ export default {
       console.log("mounted");
       this.decorateUnit();
       this.decorateTitle();
+      this.readPosition();
     },
     onUpdated() {
       console.log("updated");
       this.decorateUnit();
       this.decorateTitle();
     },
+    onRead() {
+      this.readPosition();
+    },
+    readPosition() {
+      const yOffSet = window.pageYOffset;
+      const chartMarginLeft = document
+        .getElementById("chart")
+        .getBoundingClientRect().left;
+      this.yaxisRight =
+        document
+          .getElementsByClassName("apexcharts-yaxis")[0]
+          .getBoundingClientRect().right - chartMarginLeft;
+      this.chartLeft =
+        document
+          .getElementsByClassName("apexcharts-grid")[0]
+          .getBoundingClientRect().left - chartMarginLeft;
+      this.chartXaxisLinePosition = document
+        .getElementsByClassName("apexcharts-grid")[0]
+        .getBoundingClientRect().bottom + yOffSet;
+      const bar1Left =
+        document
+          .getElementsByClassName("apexcharts-bar-area")[0]
+          .getBoundingClientRect().left - chartMarginLeft;
+      const bar1Right =
+        document
+          .getElementsByClassName("apexcharts-bar-area")[0]
+          .getBoundingClientRect().right - chartMarginLeft;
+      const bar2Left =
+        document
+          .getElementsByClassName("apexcharts-bar-area")[1]
+          .getBoundingClientRect().left - chartMarginLeft;
+      this.barwidth = bar1Right - bar1Left;
+      this.firstBarLeftPadding = bar1Left - this.chartLeft;
+      this.barSpacing = bar2Left - bar1Right;
+      this.rowColumnWidth =
+        this.chartLeft - this.barSpacing / 2 + this.firstBarLeftPadding;
+      this.columnWidth = this.barwidth + this.barSpacing;
+
+      console.log("chartXaxisLinePosition", this.chartXaxisLinePosition);
+      // console.log("barwidth", this.barwidth);
+      // console.log("firstBarLeftPadding", this.firstBarLeftPadding);
+      // console.log("chartMarginLeft", chartMarginLeft);
+      // console.log("yaxisRight", this.yaxisRight);
+      // console.log("chartLeft", this.chartLeft);
+      // console.log("bar1Right", bar1Right);
+      // console.log("bar2Left", bar2Left);
+      // console.log("barSpacing", this.barSpacing);
+    },
   },
 };
 </script>
 
 <style scoped>
+.underbar {
+  border-top: 1px solid #ee6688;
+  border-left: 1px solid #ee6688;
+  border-right: 1px solid #ee6688;
+  height: 1200px;
+  /* background-color: #ee6688; */
+  z-index: 1000;
+}
+.testbar {
+  height: 2px;
+  background-color: red;
+  margin-top: 10px;
+}
+/* .testborder {
+  height: 2px;
+  border:#ee6688;
+  margin-top: 10px;
+}  */
 .hide {
   display: none;
 }
@@ -368,8 +617,8 @@ export default {
 .tooltip-bar {
   background: #ee6688;
   position: absolute;
-  height: 280px;
-  width: 2px;
+  height: 880px;
+  width: 1px;
   z-index: 5;
 }
 #chart >>> .apexcharts-bar-area:hover {
@@ -381,5 +630,8 @@ export default {
 }
 #chart >>> .apexcharts-xaxis-label {
   font-style: italic;
+}
+
+.apexcharts-grid {
 }
 </style>

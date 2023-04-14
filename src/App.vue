@@ -1,22 +1,49 @@
 <template>
-  <div id="app">
+  <div id="app" @scroll="scrollTest">
+    <SalesOrderSelect/>
+    <SalesMetricSelect/>
     <!-- <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <Chart />
+    <div style="height: 1500px"></div>
+    <div v-if="showDum" style="height: 300px"></div>
+    <button @click="onShow">showDum</button>
+    <Chart :scrollY="scrollY"/>
   </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-import Chart from './components/Chart.vue'
+import Chart from "./components/Chart.vue";
+import SalesOrderSelect from "./components/SalesOrderSelect.vue";
+import SalesMetricSelect from "./components/SalesMetricSelect.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     // HelloWorld,
-    Chart
-  }
-}
+    SalesOrderSelect,
+    SalesMetricSelect,
+    Chart,
+  },
+  data() {
+    return {
+      scrollY: 0,
+      showDum: false
+    };
+  },
+  mounted() {
+    window.addEventListener("scroll", this.scrollTest);
+  },
+  methods: {
+    onShow() {
+      this.showDum =  true;
+    },
+    scrollTest() {
+      console.log("scrolling");
+      this.scrollY = window.scrollY
+    },
+  },
+};
 </script>
 
 <style>
