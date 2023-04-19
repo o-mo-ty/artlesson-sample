@@ -1,6 +1,8 @@
 <template>
   <div class="pulldown">
-    {{ displayName }}
+      <div class="header">
+      {{ displayName }}
+      </div>
     <div
       v-for="item in displayItems"
       :class="{ selected: isSelectedItem(item) }"
@@ -66,7 +68,9 @@ export default {
   display: inline-block;
   margin-right: 30px;
 }
-
+.header {
+  border: 1px solid #ccc;
+}
 .selected{
   color: red;
 }

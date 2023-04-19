@@ -41,10 +41,8 @@ export default {
   methods: {
     manageItems(item, items) {
       if (items.find((i) => i.id === item.id)) {
-        items = items.filter((i) => {
-          console.log("aaaa", i.id, item.id);
-          i.id !== item.id;
-        });
+        const index = items.findIndex((i) => i.id === item.id);
+        items.splice(index,1);
       } else {
         items.push(item);
       }

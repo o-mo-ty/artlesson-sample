@@ -1,9 +1,13 @@
 <template>
   <div id="app" @scroll="scrollTest">
+    <h3>連動するやつ</h3>
     <SalesOrderSelect/>
+    <div class="spacer"></div>
+    <h3>マルチセレクト(具体値込みのやつ)</h3>
     <SalesMetricSelect/>
-    <!-- <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+    <div class="spacer"></div>
+    <h3>階層持ちのやつ（これから作る）</h3>
+    <div class="spacer"></div>
     <div style="height: 1500px"></div>
     <div v-if="showDum" style="height: 300px"></div>
     <button @click="onShow">showDum</button>
@@ -12,7 +16,6 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import Chart from "./components/Chart.vue";
 import SalesOrderSelect from "./components/SalesOrderSelect.vue";
 import SalesMetricSelect from "./components/SalesMetricSelect.vue";
@@ -20,7 +23,6 @@ import SalesMetricSelect from "./components/SalesMetricSelect.vue";
 export default {
   name: "App",
   components: {
-    // HelloWorld,
     SalesOrderSelect,
     SalesMetricSelect,
     Chart,
@@ -54,5 +56,11 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.spacer {
+  height: 0px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>
