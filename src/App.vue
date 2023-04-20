@@ -6,8 +6,9 @@
     <h3>マルチセレクト(具体値込みのやつ)</h3>
     <SalesMetricSelect/>
     <div class="spacer"></div>
-    <h3>階層持ちのやつ（これから作る）</h3>
+    <h3>階層持ちのやつ</h3>
     <div class="spacer"></div>
+    <MiddleCassificationSelect/>
     <div style="height: 1500px"></div>
     <div v-if="showDum" style="height: 300px"></div>
     <button @click="onShow">showDum</button>
@@ -19,12 +20,14 @@
 import Chart from "./components/Chart.vue";
 import SalesOrderSelect from "./components/SalesOrderSelect.vue";
 import SalesMetricSelect from "./components/SalesMetricSelect.vue";
+import MiddleCassificationSelect from "./components/MiddleCassificationSelect.vue";
 
 export default {
   name: "App",
   components: {
     SalesOrderSelect,
     SalesMetricSelect,
+    MiddleCassificationSelect,
     Chart,
   },
   data() {

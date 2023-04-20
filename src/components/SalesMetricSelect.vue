@@ -1,7 +1,7 @@
 <template>
   <div>
     <MultiSelectPulldown
-      label="大項目"
+      label="中項目"
       :items="majorItem"
       :selectedItems="selectedMajorItems"
       @select="onSelectMajor"

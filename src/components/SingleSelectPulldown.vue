@@ -30,11 +30,6 @@ export default {
       required: false,
     },
   },
-  // data() {
-  //   return {
-  //     selectedItem: null,
-  //   };
-  // },
   computed: {
     displayItems() {
       return this.items.filter((item) => {
