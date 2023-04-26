@@ -56,6 +56,18 @@ export default {
       if (!this.selectedItems) {
         return false;
       }
+      // グループの親だった場合はサブアイテムが選択済みかどうかを判定する
+      if (this.hasSubItem(item)) {
+        console.log('item', item)
+        const allItemsId = item.subItems.map((i) => i.id);
+        let flg = false;
+        allItemsId.forEach((id) => {
+          if (this.selectedItems.find((i) => id === i.id)) {
+            flg = true;
+          }
+        })
+        return flg;
+      }
       if (this.selectedItems.find((i) => item.id === i.id)) {
         return true;
       }
@@ -63,17 +75,13 @@ export default {
     },
     onClick(item) {
       if (this.hasSubItem(item)) {
-        console.log('oya!')
+        console.log('グループ')
+        this.$emit("groupSelect", item);
       } else {
-        console.log('sub!')
+        console.log('単独 or サブ')
+        this.$emit("subItemSelect", item);
       }
     },
-    // onClickMain(mainItem) {
-    //   this.$emit("mainItemSelect", mainItem);
-    // },
-    // onClickSub(subItem) {
-    //   this.$emit("subItemSelect", subItem);
-    // }
   },
 };
 </script>
