@@ -50,9 +50,7 @@ export default {
     onClick(item) {
       // 選択前の選択値
       const before = this.selectedItem ? JSON.parse(JSON.stringify(this.selectedItem)) : null;
-      if (item.emittable) {
-        this.$emit("select", {index: this.pulldownIndex, before, after: item});
-      }
+      this.$emit("select", {index: this.pulldownIndex, before, after: item});
     },
   },
 };

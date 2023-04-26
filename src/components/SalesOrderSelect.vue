@@ -28,68 +28,66 @@ export default {
           id: 999,
           name: "表示しない",
           display: true,
-          emittable: false,
           default: true,
+          selectable: false,
         },
-        { id: 1, name: "科目", display: true, emittable: true, default: false },
+        { id: 1, name: "科目", display: true, default: false },
         {
           id: 2,
           name: "サービス",
           display: true,
-          emittable: true,
           default: false,
+          selectable: true,
         },
         {
           id: 3,
           name: "ジャンル",
           display: true,
-          emittable: true,
           default: false,
+          selectable: true,
         },
         {
           id: 4,
           name: "コース",
           display: true,
-          emittable: true,
           default: false,
+          selectable: true,
         },
-        { id: 5, name: "地域", display: true, emittable: true, default: false },
+        { id: 5, name: "地域", display: true, default: false, selectable: true, },
         {
           id: 6,
           name: "都道府県",
           display: true,
-          emittable: true,
           default: false,
+          selectable: true,
         },
         {
           id: 7,
           name: "スペース",
           display: true,
-          emittable: true,
           default: false,
+          selectable: true,
         },
       ],
     };
   },
   created() {
+    // 最初のプルダウンのみ初期値を変更
     this.selectedOrderItems.push(this.orderItems.find((item) => item.id === 1));
+  },
+  computed: {
+    defaultSelectItem() {
+      return this.orderItems.find((item) => item.default);
+    },
   },
   methods: {
     getSelectedItem(pulldownIndex) {
-      // if (pulldownIndex === 1) {
-      //   return this.selectedOrderItems[pulldownIndex - 1];
-      // }
       if (this.selectedOrderItems[pulldownIndex - 1] === undefined) {
-        // if (pulldownIndex === 1) {
-        //   return undefined;
-        // }
-        return this.orderItems.find((item) => item.default);
+        return this.defaultSelectItem;
       }
       return this.selectedOrderItems[pulldownIndex - 1];
     },
     getOrderItems(pulldownIndex) {
-      // debugger
-      // const items = this.orderItems.map((item) => item);
       const items = JSON.parse(JSON.stringify(this.orderItems));
       if (pulldownIndex === 1) {
         items[0].display = false;
@@ -105,26 +103,29 @@ export default {
       });
     },
     onSelect({ index, before, after }) {
-      console.log("before", before);
-      console.log("after", after);
+      // 選択されたプルダウンを含む、以下の選択を全てリセット
+      this.selectedOrderItems = this.selectedOrderItems.slice(0, index - 1);
+
+      // 選択不可項目の場合、何もせず処理を抜ける
+      if (!after.selectable) {
+        return;
+      }
+
+      // 以前の選択と同じアイテムを選択した場合、選択を解除する
       if (before && before.id === after.id) {
-        console.log("HITTTTTTTTTTTTT");
         this.selectedOrderItems = this.selectedOrderItems.filter(
           (i) => i.id !== before.id
         );
         return;
       }
 
-      if (before) {
+      // 以前の選択と異なるアイテムを選択した場合、以前の選択を削除し、新しい項目を選択状態にする
+      if (before && before.id !== after.id) {
         this.selectedOrderItems = this.selectedOrderItems.filter(
           (i) => i.id !== before.id
         );
-      }
-      if (after) {
         this.selectedOrderItems.push(after);
       }
-      console.log("item?", before, after);
-      this.selectedOrderItems = this.selectedOrderItems.slice(0, index);
     },
   },
 };
